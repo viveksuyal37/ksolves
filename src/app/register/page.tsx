@@ -1,16 +1,19 @@
 'use client';
 
 import { useCreateNewUserMutation } from '@/redux/apiSlice/userSlice';
+import { addUser } from '@/redux/userSlice';
 import { createUserSchema } from '@/types/api/zodSchemas';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 
 const Page = () => {
   const [createUser, { isLoading: isCreating, isSuccess }] =
     useCreateNewUserMutation();
 
+  const dispatch = useDispatch();
   const { push } = useRouter();
 
   const { register, handleSubmit } = useForm({
@@ -21,7 +24,8 @@ const Page = () => {
     try {
       const response = await createUser(data).unwrap();
       toast.success(response?.message ?? 'User created successfully');
-      localStorage.setItem('user', JSON.stringify(response.newUser));
+      sessionStorage.setItem('user', JSON.stringify(response.newUser));
+      dispatch(addUser(response.newUser));
       push('/events');
     } catch (error: any) {
       toast.error(error?.data?.error ?? 'Something went wrong');
@@ -54,13 +58,16 @@ const Page = () => {
               placeholder="your email"
             />
           </div>
-          {/* <div>
+          <div>
             <label htmlFor="role">Role</label>
-            <select className="w-full bg-gray-300 rounded-lg p-2">
+            <select
+              {...register('role')}
+              className="w-full bg-gray-300 rounded-lg p-2"
+            >
               <option value="user">User</option>
               <option value="admin">Admin</option>
             </select>
-          </div> */}
+          </div>
 
           <button
             disabled={isCreating}

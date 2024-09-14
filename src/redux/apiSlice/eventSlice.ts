@@ -24,6 +24,7 @@ const eventApi = rootApiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
+      providesTags: ['allEvents'],
     }),
     getEventById: builder.query<any, { eventId: string }>({
       query: params => ({
@@ -42,7 +43,7 @@ const eventApi = rootApiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['event'],
+      invalidatesTags: ['event', 'events', 'allEvents'],
     }),
   }),
 });

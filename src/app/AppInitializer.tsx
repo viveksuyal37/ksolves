@@ -33,9 +33,11 @@ const AppInitializer = ({ children }: { children: ReactNode }) => {
   }, [isUserLoading]);
 
   useEffect(() => {
-    const temp = localStorage.getItem('user');
+    const temp = sessionStorage.getItem('user');
     if (temp) {
       setUser(JSON.parse(temp));
+    } else {
+      push('/register');
     }
     setIsLoading(false);
   }, []);

@@ -28,6 +28,7 @@ const EventCard = ({
       toast.success('Event status updated successfully');
     } catch (error) {
       console.log({ error });
+      toast.error(error?.data?.error ?? 'Something went wrong');
     }
   };
 
@@ -50,10 +51,10 @@ const EventCard = ({
       {type === 'user' && (
         <>
           <div className="flex items-center gap-2">
-            <p>Status: {event.attendees[0].status}</p>
+            <p>Status: {event.attendees[event.attendees.length - 1].status}</p>
           </div>
 
-          {event.attendees[0].status === 'pending' && (
+          {event.attendees[event.attendees.length - 1].status === 'pending' && (
             <div className="flex flex-col gap-2">
               Are you attending this event?
               <div className="self-end flex gap-3">

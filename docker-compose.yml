@@ -2,19 +2,15 @@ version: '3.5'
 services:
   # app:
   #   build: .
-  #   container_name: cms-docker
+  #   container_name: web
   #   environment:
-  #     - DATABASE_URL=postgresql://postgres:postgres@db:5432/cms?schema=public
-  #     - NEXT_WEBPACK_USEPOLLING=1
+  #     - DATABASE_URL=postgresql://postgres:postgres@db:5432/ksolves?schema=public
+
   #   ports:
   #     - '3000:3000'
   #     - '5555:5555'
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
   #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  #     - db
 
   db:
     image: postgres:16.4-alpine3.20
@@ -26,4 +22,3 @@ services:
       POSTGRES_DB: ksolves
     ports:
       - 5432:5432
-  
