@@ -10,6 +10,14 @@ const eventApi = rootApiSlice.injectEndpoints({
         body,
       }),
     }),
+    deleteEvent: builder.mutation<any, { userId: string; eventId: string }>({
+      query: params => ({
+        url: 'event',
+        method: 'DELETE',
+        params,
+      }),
+      invalidatesTags: ['events', 'allEvents'],
+    }),
     getAllUserEvents: builder.query<any, { userId: string }>({
       query: params => ({
         url: 'events',
@@ -54,4 +62,5 @@ export const {
   useGetAllEventsQuery,
   useGetEventByIdQuery,
   useMapUsersToEventMutation,
+  useDeleteEventMutation,
 } = eventApi;

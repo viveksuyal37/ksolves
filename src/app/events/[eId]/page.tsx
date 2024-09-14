@@ -2,22 +2,31 @@
 
 import useUser from '@/app/hooks/useUser';
 import {
+  useDeleteEventMutation,
   useGetEventByIdQuery,
   useMapUsersToEventMutation,
 } from '@/redux/apiSlice/eventSlice';
 import { useGetAllUsersQuery } from '@/redux/apiSlice/userSlice';
 import { formatDate } from 'date-fns';
 import { MapPin } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 const Page = () => {
-  const { data, isLoading, isError } = useGetEventByIdQuery({ eventId: '1' });
+  const { eId } = useParams();
+
+  const { data, isLoading, isError } = useGetEventByIdQuery({
+    eventId: eId as string,
+  });
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const { push } = useRouter();
+
   const { activeUser, isAdmin } = useUser();
+
+  const [remove] = useDeleteEventMutation();
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -28,6 +37,22 @@ const Page = () => {
   }
 
   const { event } = data;
+
+  const handleEventDelete = async () => {
+    try {
+      const response = await remove({
+        userId: activeUser?.id,
+        eventId: event.id,
+      }).unwrap();
+      toast.success(response?.message);
+      push('/events');
+    } catch (error: any) {
+      console.log({ error });
+      toast.error(error?.data?.error ?? 'Something went wrong');
+    }
+  };
+
+  if (!event) return <div>Event not found</div>;
 
   return (
     <div className="m-3 flex flex-col gap-5">
@@ -55,12 +80,22 @@ const Page = () => {
           <div>This event has no attendee yet.</div>
         )}
       </div>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="self-start bg-black p-2 rounded-sm text-white"
-      >
-        Manage Attendees
-      </button>
+
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setIsOpen(true)}
+          className="self-start bg-black p-2 rounded-sm text-white"
+        >
+          Manage Attendees
+        </button>
+
+        <button
+          onClick={handleEventDelete}
+          className="self-start bg-red-500 p-2 rounded-sm text-white"
+        >
+          Delete Event
+        </button>
+      </div>
       {isOpen && (
         <ManageAttendeesModal
           attendees={event.attendees}

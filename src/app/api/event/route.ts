@@ -80,3 +80,36 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  const eventId = request.nextUrl.searchParams.get('eventId');
+  const userId = request.nextUrl.searchParams.get('userId');
+
+  try {
+    const targetUser = await prisma.user.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    });
+
+    console.log({ targetUser, userId });
+
+    if (!targetUser || targetUser.role !== 'admin') {
+      return Response.json({ error: 'Bad request' }, { status: 400 });
+    }
+
+    await prisma.event.delete({
+      where: {
+        id: Number(eventId),
+      },
+    });
+
+    return Response.json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.log({ error });
+    return Response.json(
+      { error: 'An error occurred while deleting event' },
+      { status: 500 },
+    );
+  }
+}

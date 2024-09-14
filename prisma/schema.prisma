@@ -31,7 +31,7 @@ model RSVP {
   eventId   Int
   status    RSVPStatus
   createdAt DateTime @default(now())
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   User      User     @relation(fields: [userId], references: [id])
   @@unique([userId, eventId])
 }
