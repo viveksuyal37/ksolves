@@ -11,14 +11,17 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    if (!user) {
-      return Response.json({ error: 'User not found' }, { status: 404 });
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Bad Request' }, { status: 404 });
     }
-    return Response.json({ message: 'User created successfully', user });
+
+    const allUsers = await prisma.user.findMany({});
+
+    return Response.json({ allUsers });
   } catch (error) {
     console.log({ error });
     return Response.json(
-      { error: 'An error occurred while creating user' },
+      { error: 'An error occurred while getting users' },
       { status: 500 },
     );
   }

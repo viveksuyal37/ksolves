@@ -41,3 +41,42 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function GET(request: NextRequest) {
+  const eventId = request.nextUrl.searchParams.get('eventId');
+  // const userId = request.nextUrl.searchParams.get('userId');
+
+  try {
+    // const targetUser = await prisma.user.findUnique({
+    //   where: {
+    //     id: Number(userId),
+    //   },
+    // });
+
+    //ideally we should check through jwt via auth middleware
+    // if (!targetUser || targetUser.role !== 'admin') {
+    //   return Response.json({ error: 'Bad request' }, { status: 400 });
+    // }
+
+    const event = await prisma.event.findUnique({
+      where: {
+        id: Number(eventId),
+      },
+      include: {
+        attendees: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
+
+    return Response.json({ event });
+  } catch (error) {
+    console.log({ error });
+    return Response.json(
+      { error: 'An error occurred while fetching event' },
+      { status: 500 },
+    );
+  }
+}
