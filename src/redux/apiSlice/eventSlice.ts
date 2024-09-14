@@ -53,6 +53,17 @@ const eventApi = rootApiSlice.injectEndpoints({
       }),
       invalidatesTags: ['event', 'events', 'allEvents'],
     }),
+    updateRsvpStatus: builder.mutation<
+      any,
+      { userIds: number[]; eventId: string; status?: string; userId: string }
+    >({
+      query: body => ({
+        url: 'event/updateRSVP',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['event', 'events', 'allEvents'],
+    }),
   }),
 });
 
@@ -63,4 +74,5 @@ export const {
   useGetEventByIdQuery,
   useMapUsersToEventMutation,
   useDeleteEventMutation,
+  useUpdateRsvpStatusMutation,
 } = eventApi;

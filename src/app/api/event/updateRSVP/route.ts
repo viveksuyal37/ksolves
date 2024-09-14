@@ -1,7 +1,7 @@
 import prisma from '@/db/db';
 import { RSVPStatus } from '@prisma/client';
 
-async function assignUsersToEvent(
+async function updateRSVPStatus(
   userIds: number[],
   eventId: number,
   status: RSVPStatus = 'pending',
@@ -9,15 +9,16 @@ async function assignUsersToEvent(
   console.log({ userIds, eventId, status });
 
   try {
-    const rsvps = await prisma.rSVP.createMany({
-      data: userIds?.map(userId => ({
-        userId: Number(userId),
+    const rsvps = await prisma.rSVP.updateMany({
+      where: {
+        userId: userIds[0],
         eventId: Number(eventId),
-        status: status,
-      })),
+      },
+      data: {
+        status,
+      },
     });
 
-    console.log('Users successfully assigned to event:', rsvps);
     return rsvps;
   } catch (error) {
     console.error('Error assigning users to event:', error);
@@ -46,20 +47,16 @@ export async function POST(request: Request) {
       return Response.json({ error: 'Bad request' }, { status: 400 });
     }
 
-    const rsvps = await assignUsersToEvent(
-      userIds,
-      eventId,
-      status ?? 'pending',
-    );
+    const rsvps = await updateRSVPStatus(userIds, eventId, status ?? 'pending');
 
     return Response.json({
-      message: 'users successfully mapped to event',
+      message: 'your response has been updated',
       rsvps,
     });
   } catch (error: any) {
     console.log({ error });
     return Response.json(
-      { error: 'An error occurred while mapping events' },
+      { error: 'An error occurred while updating your response' },
       { status: 500 },
     );
   }

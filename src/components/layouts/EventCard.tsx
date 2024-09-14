@@ -1,5 +1,5 @@
 import useUser from '@/app/hooks/useUser';
-import { useMapUsersToEventMutation } from '@/redux/apiSlice/eventSlice';
+import { useUpdateRsvpStatusMutation } from '@/redux/apiSlice/eventSlice';
 import { formatDate } from 'date-fns';
 import { Check, MapPin, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -13,7 +13,7 @@ const EventCard = ({
   type?: string;
 }) => {
   const { activeUser } = useUser();
-  const [map] = useMapUsersToEventMutation();
+  const [map] = useUpdateRsvpStatusMutation();
   const { push } = useRouter();
 
   const handleEventStatus = async (e: string) => {
